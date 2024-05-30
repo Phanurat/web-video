@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Check file size
-        if ($_FILES["videoFile"]["size"] > 500000000) { // 50MB limit
+        if ($_FILES["videoFile"]["size"] > 50000000) { // 50MB limit
             echo "Sorry, your file is too large.";
             $uploadOk = 0;
         }
