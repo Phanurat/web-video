@@ -22,19 +22,22 @@
         <div class="video-list">
             <?php
             include 'db.php';
-            $sql = "SELECT file_name, description, upload_date FROM videos ORDER BY upload_date DESC";
+            $sql = "SELECT id, file_name, description, upload_date FROM videos ORDER BY upload_date DESC";
             $result = $conn->query($sql);
 
             if ($result->num_rows > 0) {
                 while($row = $result->fetch_assoc()) {
+                    $videoId = $row["id"];
                     $video = "uploads/videos/" . $row["file_name"];
                     $description = $row["description"];
                     $uploadDate = $row["upload_date"];
                     echo "<div class='video-item'>
-                            <video width='320' height='240' controls>
-                                <source src='$video' type='video/mp4'>
-                                Your browser does not support the video tag.
-                            </video>
+                            <a href='video.php?id=$videoId'>
+                                <video width='320' height='240' controls>
+                                    <source src='$video' type='video/mp4'>
+                                    Your browser does not support the video tag.
+                                </video>
+                            </a>
                             <p>$description</p>
                             <p><small>Uploaded on: $uploadDate</small></p>
                           </div>";
