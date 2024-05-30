@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ดูวิดีโอ</title>
+    <link rel="stylesheet" href="https://vjs.zencdn.net/8.10.0/video-js.css">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -34,8 +35,9 @@
                 $description = $row["description"];
                 $uploadDate = $row["upload_date"];
                 echo "<div class='video-item'>
-                        <video width='640' height='480' controls>
+                        <video id='my-video' class='video-js' controls preload='auto' width='640' height='480' poster='MY_VIDEO_POSTER.jpg' data-setup='{}'>
                             <source src='$video' type='video/mp4'>
+                            <source src='$video' type='video/webm'>
                             เบราว์เซอร์ของคุณไม่รองรับแท็กวิดีโอ
                         </video>
                         <p>$description</p>
@@ -53,6 +55,7 @@
         ?>
     </main>
 
+    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>

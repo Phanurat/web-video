@@ -15,12 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $uploadOk = 0;
         }
 
-        // Check file size
-        if ($_FILES["videoFile"]["size"] > 50000000) { // 50MB limit
-            echo "Sorry, your file is too large.";
-            $uploadOk = 0;
-        }
-
         // Allow certain file formats
         if ($videoFileType != "mp4" && $videoFileType != "webm") {
             echo "Sorry, only MP4 & WEBM files are allowed.";
@@ -30,11 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Check if $uploadOk is set to 0 by an error
         if ($uploadOk == 0) {
             echo "Sorry, your file was not uploaded.";
-        // if everything is ok, try to upload file
         } else {
             if (move_uploaded_file($_FILES["videoFile"]["tmp_name"], $targetFile)) {
                 // บันทึกรายละเอียดในฐานข้อมูล
-                $stmt = $conn->prepare("INSERT INTO videos (file_name, description) VALUES (?, ?)");
+                $stmt = $conn->prepare("INSERT INTO videos (file_name, description, upload_date) VALUES (?, ?, NOW())");
                 $stmt->bind_param("ss", basename($_FILES["videoFile"]["name"]), $description);
                 $stmt->execute();
                 $stmt->close();
