@@ -33,7 +33,7 @@
                     $uploadDate = $row["upload_date"];
                     echo "<div class='video-item'>
                             <a href='video.php?id=$videoId'>
-                                <video width='320' height='240' controls>
+                                <video width='320' height='240' muted playsinline>
                                     <source src='$video' type='video/mp4'>
                                     Your browser does not support the video tag.
                                 </video>
@@ -51,6 +51,19 @@
         </div>
     </main>
 
-    <script src="js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var videos = document.querySelectorAll('.video-item video');
+            videos.forEach(function(video) {
+                video.addEventListener('click', function() {
+                    if (video.paused) {
+                        video.play();
+                    } else {
+                        video.pause();
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

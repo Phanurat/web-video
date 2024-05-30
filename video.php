@@ -6,6 +6,57 @@
     <title>ดูวิดีโอ</title>
     <link rel="stylesheet" href="https://vjs.zencdn.net/8.10.0/video-js.css">
     <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* เพิ่ม CSS เพื่อทำให้หน้าเว็บไซต์เป็น responsive */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        .video-item {
+            margin-bottom: 20px;
+        }
+
+        @media screen and (max-width: 768px) {
+            .video-item video {
+                width: 100%;
+                height: auto;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
