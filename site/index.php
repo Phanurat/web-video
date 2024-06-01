@@ -7,10 +7,25 @@
 </head>
 <body>
     <h1>Choose a Video</h1>
+    <li><a href="upload/upload-form.php">Upload</a></li>
     <ul>
-        <li><a href="#" onclick="playVideo('1_P5wF3pHsmBnQUy_u3ePwk8UWbloUS0_')">Video 1</a></li>
-        <li><a href="#" onclick="playVideo('VIDEO_ID_2')">Video 2</a></li>
-        <!-- Add more video options as needed -->
+        <?php
+        // Include the database configuration file
+        include '../db.php';
+
+        // Fetch video data from the database
+        $sql = "SELECT * FROM videos_drive";
+        $result = $conn->query($sql);
+
+        if ($result->num_rows > 0) {
+            // Output data of each row
+            while($row = $result->fetch_assoc()) {
+                echo '<li><a href="#" onclick="playVideo(\'' . $row['google_drive_id'] . '\')">' . $row['video_name'] . '</a></li>';
+            }
+        } else {
+            echo "0 results";
+        }
+        ?>
     </ul>
 
     <script>
