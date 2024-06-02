@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ดูวิดีโอ</title>
+    <title>ดูวิดีโอจาก Google Drive</title>
     <link rel="stylesheet" href="https://vjs.zencdn.net/8.10.0/video-js.css">
     <link rel="stylesheet" href="css/styles.css">
     <style>
@@ -51,7 +51,7 @@
         }
 
         @media screen and (max-width: 768px) {
-            .video-item video {
+            .video-item iframe {
                 width: 100%;
                 height: auto;
             }
@@ -74,25 +74,22 @@
         if (isset($_GET['id'])) {
             include 'db.php';
             $videoId = $_GET['id'];
-            $sql = "SELECT file_name, description, upload_date FROM videos WHERE id = ?";
+            $sql = "SELECT video_name, google_drive_id, description, video_type FROM videos_drive WHERE google_drive_id = ?";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("i", $videoId);
+            $stmt->bind_param("s", $videoId);
             $stmt->execute();
             $result = $stmt->get_result();
 
             if ($result->num_rows > 0) {
                 $row = $result->fetch_assoc();
-                $video = "uploads/videos/" . $row["file_name"];
+                $videoName = $row["video_name"];
+                $googleDriveId = $row["google_drive_id"];
                 $description = $row["description"];
-                $uploadDate = $row["upload_date"];
+                $videoType = $row["video_type"];
                 echo "<div class='video-item'>
-                        <video id='my-video' class='video-js' controls preload='auto' width='640' height='480' poster='MY_VIDEO_POSTER.jpg' data-setup='{}'>
-                            <source src='$video' type='video/mp4'>
-                            <source src='$video' type='video/webm'>
-                            เบราว์เซอร์ของคุณไม่รองรับแท็กวิดีโอ
-                        </video>
+                        <iframe src='https://drive.google.com/file/d/$googleDriveId/preview' width='640' height='480' allow='autoplay'></iframe>
                         <p>$description</p>
-                        <p><small>อัปโหลดเมื่อ: $uploadDate</small></p>
+                        <p><small>ประเภทวิดีโอ: $videoType</small></p>
                       </div>";
             } else {
                 echo "ไม่พบวิดีโอ";

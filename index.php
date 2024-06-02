@@ -22,6 +22,8 @@
         <div class="video-list">
             <?php
             include 'db.php';
+
+            // Fetch videos from the local server
             $sql = "SELECT id, file_name, description, upload_date FROM videos ORDER BY upload_date DESC";
             $result = $conn->query($sql);
 
@@ -43,7 +45,39 @@
                           </div>";
                 }
             } else {
-                echo "No videos found.";
+                echo "<p>No videos found.</p>";
+            }
+
+            $conn->close();
+            ?>
+        </div>
+
+        <h2>Drive Videos</h2>
+        <div class="video-list">
+            <?php
+            include 'db.php';
+
+            // Fetch videos from Google Drive
+            $sql = "SELECT id, video_name, google_drive_id, description, video_type FROM videos_drive ORDER BY id DESC";
+            $result = $conn->query($sql);
+
+            if ($result->num_rows > 0) {
+                while($row = $result->fetch_assoc()) {
+                    $videoId = $row["google_drive_id"];
+                    $videoName = $row["video_name"];
+                    $description = $row["description"];
+                    $videoType = $row["video_type"];
+                    echo "<div class='video-item'>
+                            <a href='drive_video.php?id=$videoId'>
+                                <img src='https://drive.google.com/thumbnail?authuser=0&sz=w320&id=$videoId' alt='$videoName' width='320' height='240'>
+                            </a>
+                            <p>$videoName</p>
+                            <p>$description</p>
+                            <p><small>Type: $videoType</small></p>
+                          </div>";
+                }
+            } else {
+                echo "<p>No videos found.</p>";
             }
 
             $conn->close();
