@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ดูวิดีโอจาก Google Drive</title>
     <link rel="stylesheet" href="https://vjs.zencdn.net/8.10.0/video-js.css">
-    <link rel="stylesheet" href="css/styles.css">
     <style>
-        /* เพิ่ม CSS เพื่อทำให้หน้าเว็บไซต์เป็น responsive */
         body, html {
             margin: 0;
             padding: 0;
@@ -50,6 +48,38 @@
             margin-bottom: 20px;
         }
 
+        #ad-container {
+            position: relative;
+            display: none;
+        }
+
+        #ad-container video {
+            width: 100%;
+            height: auto;
+        }
+
+        #skip-button {
+            position: absolute;
+            bottom: 10px; /* ตำแหน่งด้านล่างของวิดีโอ */
+            right: 10px; /* ตำแหน่งด้านขวาของวิดีโอ */
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+            display: none; /* ซ่อนปุ่มในตอนแรก */
+        }
+
+        #countdown {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+        }
+
         @media screen and (max-width: 768px) {
             .video-item iframe {
                 width: 100%;
@@ -70,40 +100,87 @@
     </header>
 
     <main>
-        <?php
-        if (isset($_GET['id'])) {
-            include 'db.php';
-            $videoId = $_GET['id'];
-            $sql = "SELECT video_name, google_drive_id, description, video_type FROM videos_drive WHERE google_drive_id = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("s", $videoId);
-            $stmt->execute();
-            $result = $stmt->get_result();
+        <div id="ad-container">
+            <video id="ad-video" class="video-js" controls preload="auto">
+                <source src="ads-video/ads.mp4" type="video/mp4">
+                เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอ
+            </video>
+            <button id="skip-button">ข้ามโฆษณา</button>
+            <div id="countdown">ข้ามได้ใน 3 วินาที</div>
+        </div>
 
-            if ($result->num_rows > 0) {
-                $row = $result->fetch_assoc();
-                $videoName = $row["video_name"];
-                $googleDriveId = $row["google_drive_id"];
-                $description = $row["description"];
-                $videoType = $row["video_type"];
-                echo "<div class='video-item'>
-                        <iframe src='https://drive.google.com/file/d/$googleDriveId/preview' width='640' height='480' allow='autoplay'></iframe>
-                        <p>$description</p>
-                        <p><small>ประเภทวิดีโอ: $videoType</small></p>
-                      </div>";
+        <div id="main-video-container" style="display:none;">
+            <?php
+            if (isset($_GET['id'])) {
+                include 'db.php';
+                $videoId = $_GET['id'];
+                $sql = "SELECT video_name, google_drive_id, description, video_type FROM videos_drive WHERE google_drive_id = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("s", $videoId);
+                $stmt->execute();
+                $result = $stmt->get_result();
+
+                if ($result->num_rows > 0) {
+                    $row = $result->fetch_assoc();
+                    $videoName = $row["video_name"];
+                    $googleDriveId = $row["google_drive_id"];
+                    $description = $row["description"];
+                    $videoType = $row["video_type"];
+                    echo "<div class='video-item'>
+                            <iframe id='main-video' src='https://drive.google.com/file/d/$googleDriveId/preview' width='640' height='480' allow='autoplay'></iframe>
+                            <p>$description</p>
+                            <p><small>ประเภทวิดีโอ: $videoType</small></p>
+                          </div>";
+                } else {
+                    echo "ไม่พบวิดีโอ";
+                }
+
+                $stmt->close();
+                $conn->close();
             } else {
-                echo "ไม่พบวิดีโอ";
+                echo "ไม่ได้ระบุวิดีโอ";
             }
-
-            $stmt->close();
-            $conn->close();
-        } else {
-            echo "ไม่ได้ระบุวิดีโอ";
-        }
-        ?>
+            ?>
+        </div>
     </main>
 
     <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
-    <script src="js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const adContainer = document.getElementById('ad-container');
+            const adVideo = videojs('ad-video');
+            const skipButton = document.getElementById('skip-button');
+            const mainVideoContainer = document.getElementById('main-video-container');
+            const countdown = document.getElementById('countdown');
+
+            adContainer.style.display = 'block';
+
+            let countdownTimer = 3;
+
+            adVideo.on('play', () => {
+                const countdownInterval = setInterval(() => {
+                    countdownTimer--;
+                    countdown.textContent = `ข้ามได้ใน ${countdownTimer} วินาที`;
+
+                    if (countdownTimer <= 0) {
+                        clearInterval(countdownInterval);
+                        skipButton.style.display = 'block';
+                        countdown.style.display = 'none';
+                    }
+                }, 1000);
+            });
+
+            skipButton.addEventListener('click', () => {
+                adVideo.pause();
+                adContainer.style.display = 'none';
+                mainVideoContainer.style.display = 'block';
+            });
+
+            adVideo.on('ended', () => {
+                adContainer.style.display = 'none';
+                mainVideoContainer.style.display = 'block';
+            });
+        });
+    </script>
 </body>
 </html>
