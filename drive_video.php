@@ -42,10 +42,12 @@
 
         main {
             padding: 20px;
+            position: relative; /* ต้องการให้สามารถเปลี่ยนตำแหน่งได้ */
         }
 
         .video-item {
             margin-bottom: 20px;
+            position: relative; /* ต้องการให้สามารถเปลี่ยนตำแหน่งได้ */
         }
 
         #ad-container {
@@ -72,12 +74,13 @@
 
         #countdown {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            bottom: 10px; /* ตำแหน่งด้านล่างของวิดีโอ */
+            right: 10px; /* ตำแหน่งด้านขวาของวิดีโอ */
             background-color: rgba(0, 0, 0, 0.5);
             color: #fff;
             padding: 5px 10px;
             border: none;
+            display: none; /* ซ่อนนับถอยหลังในตอนแรก */
         }
 
         @media screen and (max-width: 768px) {
@@ -158,6 +161,8 @@
             let countdownTimer = 3;
 
             adVideo.on('play', () => {
+                countdown.style.display = 'block'; // แสดงนับถอยหลังเมื่อเล่นโฆษณา
+
                 const countdownInterval = setInterval(() => {
                     countdownTimer--;
                     countdown.textContent = `ข้ามได้ใน ${countdownTimer} วินาที`;
@@ -174,11 +179,13 @@
                 adVideo.pause();
                 adContainer.style.display = 'none';
                 mainVideoContainer.style.display = 'block';
+                skipButton.style.display = 'none'; // ซ่อนปุ่มข้ามเมื่อเปิดวิดีโอหลัก
             });
 
             adVideo.on('ended', () => {
                 adContainer.style.display = 'none';
                 mainVideoContainer.style.display = 'block';
+                skipButton.style.display = 'none'; // ซ่อนปุ่มข้ามเมื่อเปิดวิดีโอหลัก
             });
         });
     </script>

@@ -1,0 +1,29 @@
+version: "3"
+
+services: 
+  php:
+    build: 
+      context: ./php
+    ports: 
+      - "3003:80"
+    volumes: 
+      #- /var/www/html/first_app/node_modules
+      - ./site:/var/www/html
+      
+  database:
+    image: mysql:8.0
+    environment: 
+      MYSQL_ROOT_PASSWORD: 1111
+      TZ: Asia/Bangkok
+    volumes: 
+      - ./mysql_db:/var/lib/mysql
+  
+  pma:
+    image: phpmyadmin/phpmyadmin
+    environment: 
+      PMA_ARBITRARY: 1
+      UPLOAD_LIMIT : 100M
+    ports: 
+      - "3004:80"
+# volumes: 
+#   mysql_db:
